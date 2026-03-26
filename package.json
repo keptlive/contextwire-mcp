@@ -1,0 +1,8 @@
+{
+  "name": "contextwire-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for ContextWire — web search API with 105 engines and 94.3% SimpleQA accuracy",
+  "license": "MIT",
+  "homepage": "https://contextwire.dev",
+  "keywords": ["mcp", "search", "ai", "web-search", "claude", "model-context-protocol"]
+}
