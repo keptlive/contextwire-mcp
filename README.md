@@ -17,7 +17,8 @@ Add to your MCP client config (Claude Desktop, Claude Code, Cursor, etc.):
 {
   "mcpServers": {
     "contextwire": {
-      "url": "https://contextwire.dev/mcp"
+      "url": "https://contextwire.dev/mcp",
+      "headers": { "Authorization": "Bearer YOUR_API_KEY" }
     }
   }
 }
@@ -29,38 +30,41 @@ No local server needed — it's a hosted MCP endpoint.
 
 | Tool | Description |
 |------|-------------|
-|  | Ask a factual question → synthesized answer with sources |
-|  | Web search across 105 engines with 14 search profiles |
-|  | Extract clean text/markdown from any URL |
-|  | Search academic papers (arXiv, PubMed, Semantic Scholar, etc.) |
-|  | Run multiple searches in parallel |
+| `ask` | Ask a factual question → synthesized answer with sources |
+| `search` | Web search with selectable search profiles |
+| `extract` | Extract clean text/markdown from a URL |
+| `research` | Search academic papers (arXiv, PubMed, Semantic Scholar, etc.) |
+| `batch_search` | Run multiple searches in parallel |
 
 ## Search Profiles
 
 | Profile | Engines | Best for |
 |---------|---------|----------|
-|  | Google, Bing, DDG, Wikipedia | General search |
-|  | Google News, Bing News | Current events |
-|  | arXiv, PubMed, Semantic Scholar | Research papers |
-|  | GitHub, StackOverflow | Programming |
-|  | Hacker News, Lobsters, Reddit | Developer news |
-|  | Yahoo Finance, market data | Financial data |
-|  | GitHub, GitLab | Code repositories |
-|  | npm, PyPI, crates.io | Package search |
-|  | CVE databases | Security advisories |
-|  | Reddit, Twitter | Social media |
-|  | Wikipedia, Wiktionary | Reference material |
-|  | Google Images, Bing Images | Image search |
-|  | YouTube, Vimeo | Video search |
-|  | All 105 engines | Maximum coverage |
+| `web` | Google, Bing, DDG, Wikipedia | General search |
+| `news` | Google News, Bing News | Current events |
+| `academic` | arXiv, PubMed, Semantic Scholar | Research papers |
+| `code` | GitHub, StackOverflow | Programming |
+| `devnews` | Hacker News, Lobsters, Reddit | Developer news |
+| `finance` | Yahoo Finance, market data | Financial data |
+| `repos` | GitHub, GitLab | Code repositories |
+| `packages` | npm, PyPI, crates.io | Package search |
+| `security` | CVE databases | Security advisories |
+| `social` | Reddit, Twitter | Social media |
+| `reference` | Wikipedia, Wiktionary | Reference material |
+| `images` | Google Images, Bing Images | Image search |
+| `videos` | YouTube, Vimeo | Video search |
+| `all` | All configured engines | Maximum coverage |
+
+These names come from the API reference and are not an exhaustive live inventory.
+Use authenticated `GET /api/profiles` for current profiles and engine configurations.
 
 ## API Examples
 
 ### Ask a question
 ```bash
-curl "https://contextwire.dev/api/ask" \
+curl --get "https://contextwire.dev/api/ask" \
   -H "Authorization: Bearer YOUR_KEY" \
-  -d '{"q": "What is the current price of Bitcoin?"}'
+  --data-urlencode "q=Who invented the transistor?"
 ```
 
 ### Search with profiles
@@ -79,25 +83,26 @@ curl "https://contextwire.dev/api/extract?url=https://example.com&format=markdow
 
 - **1,000 queries/month** — no credit card required
 - **BYOK supported** — bring your own LLM key to save credits
-- **/bin/bash LLM cost** — default model is free via OpenRouter
+- LLM availability and charges depend on the selected model and provider.
 
 Get your API key at **[contextwire.dev](https://contextwire.dev)**.
 
-## Node.js SDK
+## Node.js usage
 
-```bash
-npm install @contextwire/sdk
-```
+The advertised `@contextwire/sdk` package is not currently available on the public npm
+registry, and its repository is private. Use the HTTP API directly:
 
 ```js
-import { ContextWire } from '@contextwire/sdk';
-
-const cw = new ContextWire('YOUR_API_KEY');
-const answer = await cw.ask('Who invented the transistor?');
-console.log(answer.answer);
+const url = new URL('https://contextwire.dev/api/ask');
+url.searchParams.set('q', 'Who invented the transistor?');
+const response = await fetch(url, {
+  headers: { Authorization: `Bearer ${process.env.CONTEXTWIRE_API_KEY}` }
+});
+if (!response.ok) throw new Error(`ContextWire HTTP ${response.status}`);
+console.log(await response.json());
 ```
 
-SDK repo: [github.com/keptlive/contextwire-sdk](https://github.com/keptlive/contextwire-sdk)
+Requires Node.js with built-in `fetch` and a ContextWire API key.
 
 ## Links
 
