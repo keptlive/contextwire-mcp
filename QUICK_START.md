@@ -45,7 +45,7 @@ Run `/mcp` in Claude Code to verify. You should see 5 tools:
 | `ask` | Natural-language question → sourced answer |
 | `search` | Web search across 105 engines |
 | `extract` | Pull full content from any URL |
-| `research` | Multi-step deep research with citations |
+| `research` | Search academic papers |
 | `batch_search` | Multiple searches in parallel |
 
 ## 4. Try it
